@@ -22,25 +22,25 @@ public class Form2_Tugas2 extends javax.swing.JFrame {
     String NIM, Nama, date, umur;
     
     
-    public Form2_Tugas2(String nim, String nama, String tanggal) {
+    public Form2_Tugas2(String nim, String nama, Date tanggal) {
         initComponents();
         NIM = nim;
         txthslnim.setText(NIM);
         Nama = nama;
         txthslnama.setText(Nama);
-        date = tanggal;
+        
         txthsltgl.setText(date);
         
         //thn sekarang
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
-        SimpleDateFormat sdf1 = new SimpleDateFormat("yy");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy");
         Date datenow = new Date();
         String date1 = sdf1.format(datenow);
         String datelhr = sdf1.format(tanggal);
         //ubah ke date
         
-        
-        
+        date = sdf.format(tanggal);
+        txthsltgl.setText(date);
         
         // hitung umur
         int htumur = Integer.parseInt(date1) - Integer.parseInt(datelhr); 

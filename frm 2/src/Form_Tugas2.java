@@ -34,7 +34,6 @@ public class Form_Tugas2 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSpinField1 = new com.toedter.components.JSpinField();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -176,11 +175,10 @@ public class Form_Tugas2 extends javax.swing.JFrame {
         Nama = txtnama.getText();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = sdf.format(cmbTgl.getSelectedDate().getTime());
+        Date date1 = cmbTgl.getSelectedDate().getTime();
         
-        Form2_Tugas2 form2 = new Form2_Tugas2(NIM, Nama, date);
+        Form2_Tugas2 form2 = new Form2_Tugas2(NIM, Nama, date1);
         form2.setVisible(true);
-        
-        
         
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -228,7 +226,6 @@ public class Form_Tugas2 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private com.toedter.components.JSpinField jSpinField1;
     private javax.swing.JLabel lblhasil;
     private javax.swing.JTextField txtnama;
     private javax.swing.JTextField txtnim;
