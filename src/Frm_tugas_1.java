@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,8 +23,12 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
      */
     
     Connection con;
+    private DefaultTableModel dtm;
     
     public void initializeDB() {
+        dtm = new DefaultTableModel();
+        tableMahasiswa.setModel(dtm);
+        dtm.addColumn("NIM"); dtm.addColumn("Nama"); dtm.addColumn("Nilai"); dtm.addColumn("Index");
         try {
         Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:" + "3306/java_tugas", 
@@ -40,6 +45,7 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
             String sql = "INSERT INTO t_mahasiswa VALUES (" + tfTambahNim.getText().toString() + ", '" + tfTambahNama.getText() + "', 0, '')";
             smt.execute(sql);
             smt.close();
+            tampilData();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error: " + e);
         }
@@ -47,17 +53,46 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
     
     public void tampilData() {
         try {
+            dtm.getDataVector().removeAllElements();
+            dtm.fireTableDataChanged();
             Statement smt = con.createStatement();
             String sql = "select * from t_mahasiswa";
             ResultSet res = smt.executeQuery(sql);
+            while (res.next()) {
+                Object[] obj = new Object[4];
+                obj[0] = res.getString(1);
+                obj[1] = res.getString(2);
+                obj[2] = res.getString(3);
+                obj[3] = res.getString(4);
+                dtm.addRow(obj);
+                
+            }
+            smt.close();
         } catch (Exception e) {
-            
+             JOptionPane.showMessageDialog(null, "Error: " + e);
+        }
+    }
+    
+    void updateData() {
+        try {
+            Statement smt = con.createStatement();
+            String sql = "UPDATE t_mahasiswa SET Nilai=" + Float.parseFloat(tfHitungNilai.getText()) + " where NIM='" + tfHitungNim.getText() + "'";
+            System.out.println(sql);
+            smt.execute(sql);
+            sql = "UPDATE t_mahasiswa SET Indeks='" + lblHitungIndeks.getText().toString() + "' where NIM='" + tfHitungNim.getText().toString() + "'";
+            System.out.println(sql);
+            smt.execute(sql);
+            smt.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
     }
     
     public Frm_tugas_1() {
         initComponents();
         initializeDB();
+        tampilData();
+        jPanel3.setVisible(false);
     }
 
     /**
@@ -71,20 +106,30 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableMahasiswa = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         tfTambahNim = new javax.swing.JTextField();
         tfTambahNama = new javax.swing.JTextField();
         btnSimpanData = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        tfHitungNama = new javax.swing.JTextField();
+        tfHitungNim = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        tfHitungNilai = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        lblHitungIndeks = new javax.swing.JLabel();
+        btnSimpanIndeks = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "FORM MAHASISWA"));
         jPanel1.setName(""); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableMahasiswa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -103,7 +148,12 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tableMahasiswa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMahasiswaMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tableMahasiswa);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Tambah Data"));
 
@@ -182,13 +232,100 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "FORM HITUNG INDEX MAHASISWA"));
+
+        jLabel4.setText("Nama");
+
+        jLabel3.setText("NIM");
+
+        tfHitungNama.setEditable(false);
+
+        tfHitungNim.setEditable(false);
+        tfHitungNim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfHitungNimActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Nilai");
+
+        jLabel6.setText("Index");
+
+        lblHitungIndeks.setText("A/B/C/D/E");
+
+        btnSimpanIndeks.setText("Simpan");
+        btnSimpanIndeks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanIndeksActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblHitungIndeks)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tfHitungNilai))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(tfHitungNim))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfHitungNama)))
+                .addGap(39, 39, 39))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(133, Short.MAX_VALUE)
+                .addComponent(btnSimpanIndeks)
+                .addGap(130, 130, 130))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(tfHitungNim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(tfHitungNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(tfHitungNilai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(lblHitungIndeks))
+                .addGap(18, 18, 18)
+                .addComponent(btnSimpanIndeks)
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -196,7 +333,9 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(255, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -210,6 +349,36 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
         // TODO add your handling code here:
         simpanData();
     }//GEN-LAST:event_btnSimpanDataActionPerformed
+
+    private void tableMahasiswaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMahasiswaMouseClicked
+        // TODO add your handling code here:
+        int row = tableMahasiswa.getSelectedRow();
+        int column = tableMahasiswa.getSelectedColumn();
+        if (column == 0 || column == 1) {
+            jPanel3.setVisible(true);
+            tfHitungNim.setText(tableMahasiswa.getValueAt(row, 0).toString());
+            tfHitungNama.setText(tableMahasiswa.getValueAt(row, 1).toString());
+        }
+        
+    }//GEN-LAST:event_tableMahasiswaMouseClicked
+
+    private void tfHitungNimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfHitungNimActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfHitungNimActionPerformed
+
+    private void btnSimpanIndeksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanIndeksActionPerformed
+        // TODO add your handling code here:
+        float nilai = Float.parseFloat(tfHitungNilai.getText());
+        char indeks;
+        if (nilai > 80) {
+            indeks = 'A';
+        } else {
+            indeks = 'B';
+        } 
+        lblHitungIndeks.setText(String.valueOf(indeks));
+        updateData();
+        tampilData();
+    }//GEN-LAST:event_btnSimpanIndeksActionPerformed
 
     /**
      * @param args the command line arguments
@@ -249,12 +418,22 @@ public class Frm_tugas_1 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSimpanData;
+    private javax.swing.JButton btnSimpanIndeks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lblHitungIndeks;
+    private javax.swing.JTable tableMahasiswa;
+    private javax.swing.JTextField tfHitungNama;
+    private javax.swing.JTextField tfHitungNilai;
+    private javax.swing.JTextField tfHitungNim;
     private javax.swing.JTextField tfTambahNama;
     private javax.swing.JTextField tfTambahNim;
     // End of variables declaration//GEN-END:variables
