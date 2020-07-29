@@ -19,7 +19,9 @@ public class Form2_Tugas2 extends javax.swing.JFrame {
     /**
      * Creates new form Form2_Tugas2
      */
-    String NIM, Nama, date, umur;
+    String NIM, Nama, date; 
+    int umur;
+    private static String simpan;
     
     
     public Form2_Tugas2(String nim, String nama, Date tanggal) {
@@ -43,11 +45,11 @@ public class Form2_Tugas2 extends javax.swing.JFrame {
         txthsltgl.setText(date);
         
         // hitung umur
-        int htumur = Integer.parseInt(date1) - Integer.parseInt(datelhr); 
+        umur = Integer.parseInt(date1) - Integer.parseInt(datelhr); 
         
         //tampil umur
         
-        txtumur.setText(String.valueOf(htumur));
+        txtumur.setText(String.valueOf(umur));
         
     }
 
@@ -83,6 +85,11 @@ public class Form2_Tugas2 extends javax.swing.JFrame {
         jLabel4.setText("Umur");
 
         jButton1.setText("Simpan");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         txthslnim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,6 +174,19 @@ public class Form2_Tugas2 extends javax.swing.JFrame {
         // TODO add your handling code here:
        
     }//GEN-LAST:event_txthslnimActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        simpan = String.valueOf(umur + " Tahun");
+        
+        
+        Form_Tugas2 frm = new Form_Tugas2(simpan);
+        
+        frm.setVisible(true);
+        
+        this.setVisible(false);
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

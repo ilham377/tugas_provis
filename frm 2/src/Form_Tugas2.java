@@ -19,10 +19,12 @@ public class Form_Tugas2 extends javax.swing.JFrame {
      * Creates new form Form_Tugas2
      */
     
+    private static String simpan;
     
-    
-    public Form_Tugas2() {
+    public Form_Tugas2(String simpan) {
         initComponents();
+        simpan = simpan;
+        lblhasil.setText(simpan);
     }
 
     /**
@@ -213,7 +215,7 @@ public class Form_Tugas2 extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Form_Tugas2().setVisible(true);
+                new Form_Tugas2(simpan).setVisible(true);
             }
         });
     }
